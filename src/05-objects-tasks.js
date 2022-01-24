@@ -112,77 +112,128 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-const cssSelectorBuilder = {
-  str: '',
-  order: 0,
-  error: 'ERR id occur more than one time',
-  orderError: 'Element, id and pseudo-element should not occur more then one time inside the selector" if element, id or pseudo-element occurs twice or more times',
-  checkOrder(order) {
-    if (this.order > order) {
-      throw new Error(this.orderError);
-    }
-    if (order === this.order && [1, 2, 6].includes(order)) {
-      throw new Error(this.error);
-    }
-  },
+class SelectorCombinator {
+  constructor(selector1, selector2, combinator) {
+    this.selector1 = selector1;
+    this.selector2 = selector2;
+    this.combinator = combinator;
+  }
+
+  stringify() {
+    return `${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()}`;
+  }
+}
+
+class SelectorClass {
+  constructor() {
+    this.elementValue = '';
+    this.idValue = '';
+    this.attrValue = '';
+    this.pseudoElementValue = '';
+
+    this.classes = '';
+    this.pseudoClasses = '';
+
+    this.combines = [];
+  }
+
   element(value) {
-    this.checkOrder(1);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = this.str + value;
-    obj.order = 1;
-    return obj;
+    if (this.elementValue) {
+      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.idValue) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.elementValue = value;
+    return this;
+  }
+
+  id(value) {
+    if (this.idValue) {
+      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.classes) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.pseudoElementValue) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+
+    this.idValue = `#${value}`;
+    return this;
+  }
+
+  class(value) {
+    if (this.attrValue) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.classes += `.${value}`;
+    return this;
+  }
+
+  attr(value) {
+    if (this.pseudoClasses) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.attrValue = `[${value}]`;
+    return this;
+  }
+
+  pseudoClass(value) {
+    if (this.pseudoElementValue) {
+      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    this.pseudoClasses += `:${value}`;
+    return this;
+  }
+
+  pseudoElement(value) {
+    if (this.pseudoElementValue) {
+      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    this.pseudoElementValue += `::${value}`;
+    return this;
+  }
+
+  stringify() {
+    return `${this.elementValue}${this.idValue}${this.classes}${this.attrValue}${this.pseudoClasses}${this.pseudoElementValue}`;
+  }
+}
+
+const cssSelectorBuilder = {
+  element(value) {
+    const selector = new SelectorClass();
+    return selector.element(value);
   },
 
   id(value) {
-    this.checkOrder(2);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${this.str}#${value}`;
-    obj.order = 2;
-    return obj;
+    const selector = new SelectorClass();
+    return selector.id(value);
   },
 
   class(value) {
-    this.checkOrder(3);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${this.str}.${value}`;
-    obj.order = 3;
-    return obj;
+    const selector = new SelectorClass();
+    return selector.class(value);
   },
 
   attr(value) {
-    this.checkOrder(4);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${this.str}[${value}]`;
-    obj.order = 4;
-    return obj;
+    const selector = new SelectorClass();
+    return selector.attr(value);
   },
 
   pseudoClass(value) {
-    this.checkOrder(5);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${this.str}:${value}`;
-    obj.order = 5;
-    return obj;
+    const selector = new SelectorClass();
+    return selector.pseudoClass(value);
   },
 
   pseudoElement(value) {
-    this.checkOrder(6);
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${this.str}::${value}`;
-    obj.order = 6;
-    return obj;
+    const selector = new SelectorClass();
+    return selector.pseudoElement(value);
   },
 
   combine(selector1, combinator, selector2) {
-    const obj = { ...cssSelectorBuilder };
-    obj.str = `${selector1.stringify()} ${combinator} ${selector2.stringify()}`;
-    return obj;
-  },
-
-  stringify() {
-    const { str } = this;
-    this.str = '';
-    return str;
+    const comb = new SelectorCombinator(selector1, selector2, combinator);
+    return comb;
   },
 };
 
