@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* ************************************************************************************************
  *                                                                                                *
  * Please read the following tutorial before implementing tasks:                                   *
@@ -112,128 +113,33 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
-class SelectorCombinator {
-  constructor(selector1, selector2, combinator) {
-    this.selector1 = selector1;
-    this.selector2 = selector2;
-    this.combinator = combinator;
-  }
-
-  stringify() {
-    return `${this.selector1.stringify()} ${this.combinator} ${this.selector2.stringify()}`;
-  }
-}
-
-class SelectorClass {
-  constructor() {
-    this.elementValue = '';
-    this.idValue = '';
-    this.attrValue = '';
-    this.pseudoElementValue = '';
-
-    this.classes = '';
-    this.pseudoClasses = '';
-
-    this.combines = [];
-  }
-
-  element(value) {
-    if (this.elementValue) {
-      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    if (this.idValue) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    this.elementValue = value;
-    return this;
-  }
-
-  id(value) {
-    if (this.idValue) {
-      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    if (this.classes) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    if (this.pseudoElementValue) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-
-    this.idValue = `#${value}`;
-    return this;
-  }
-
-  class(value) {
-    if (this.attrValue) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    this.classes += `.${value}`;
-    return this;
-  }
-
-  attr(value) {
-    if (this.pseudoClasses) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    this.attrValue = `[${value}]`;
-    return this;
-  }
-
-  pseudoClass(value) {
-    if (this.pseudoElementValue) {
-      throw Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
-    }
-    this.pseudoClasses += `:${value}`;
-    return this;
-  }
-
-  pseudoElement(value) {
-    if (this.pseudoElementValue) {
-      throw Error('Element, id and pseudo-element should not occur more then one time inside the selector');
-    }
-    this.pseudoElementValue += `::${value}`;
-    return this;
-  }
-
-  stringify() {
-    return `${this.elementValue}${this.idValue}${this.classes}${this.attrValue}${this.pseudoClasses}${this.pseudoElementValue}`;
-  }
-}
-
 const cssSelectorBuilder = {
-  element(value) {
-    const selector = new SelectorClass();
-    return selector.element(value);
+  element(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  id(value) {
-    const selector = new SelectorClass();
-    return selector.id(value);
+  id(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  class(value) {
-    const selector = new SelectorClass();
-    return selector.class(value);
+  class(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  attr(value) {
-    const selector = new SelectorClass();
-    return selector.attr(value);
+  attr(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  pseudoClass(value) {
-    const selector = new SelectorClass();
-    return selector.pseudoClass(value);
+  pseudoClass(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  pseudoElement(value) {
-    const selector = new SelectorClass();
-    return selector.pseudoElement(value);
+  pseudoElement(/* value */) {
+    throw new Error('Not implemented');
   },
 
-  combine(selector1, combinator, selector2) {
-    const comb = new SelectorCombinator(selector1, selector2, combinator);
-    return comb;
+  combine(/* selector1, combinator, selector2 */) {
+    throw new Error('Not implemented');
   },
 };
 
