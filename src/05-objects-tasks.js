@@ -116,7 +116,7 @@ const cssSelectorBuilder = {
   str: '',
   order: 0,
   error: 'ERR id occur more than one time',
-  orderError: 'ERR wrong order',
+  orderError: 'Element, id and pseudo-element should not occur more then one time inside the selector" if element, id or pseudo-element occurs twice or more times',
   checkOrder(order) {
     if (this.order > order) {
       throw new Error(this.orderError);
